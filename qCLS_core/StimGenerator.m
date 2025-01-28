@@ -31,6 +31,8 @@ if strcmp(Type,'noise')% Bandpass noise
     f_ph = 2*pi*rand(nf,1);
     xfft(f_idx) = f_mag.*exp(1j*f_ph);
     x = ifft(xfft,'symmetric');
+elseif strcmp(Type,'AM') % AM tone
+    x=(1-cos(pi*BW.*t)).*cos(2*pi*Freq.*t);     
 elseif strcmp(Type,'tone') % Pure tone
     x=cos(2*pi*Freq.*t);     
 end
