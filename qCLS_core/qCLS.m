@@ -6,8 +6,9 @@ classdef qCLS <handle
         xnext % the next stimulus based on the previous data;
         Lmodels % likelihood of various models
         models % model struct
-        r   %the listener's responses (correctness)
-        par %the data structure containing the configurations of the parameter space   
+        r   % listener's responses (correctness)
+        t   % listener's response time (sec)
+        par % data structure containing the configurations of the parameter space   
         n=0;   %the trial number
 
         % iso-loudness-level contour
@@ -102,6 +103,7 @@ classdef qCLS <handle
         function reset(qcls)
             qcls.x;
             qcls.r;
+            qcls.t;
             qcls.n = 0;
             
             % prior distributions
@@ -121,17 +123,18 @@ classdef qCLS <handle
         
         % ITERATION
         
-        %Update posterior and xnext based on the previous posterior and the
-        %new response r.
-        function update(qcls, r , x)
+        % Update posterior and xnext based on the previous posterior and the
+        % new response r.
+        function update(qcls, r, t, x)
             qcls.n = qcls.n + 1;
-            qcls.r(qcls.n,:) = r;
-            if nargin == 2
+            qcls.r(qcls.n,:) = r; % response category
+            qcls.t(qcls.n,:) = t; % response time
+            if (nargin == 4)
+                qcls.x(qcls.n,:) = x; % next stimulus condition
+            else
                 qcls.x(qcls.n,:) = qcls.xnext;
-            elseif nargin == 3
-                qcls.x(qcls.n,:) = x;
             end
-            
+
             % update model parameters
             for imodel = 1:length(qcls.Lmodels)
                 r_tmp = qcls.r(qcls.n,:) > (1:qcls.par.Ncategories-1)';
